@@ -6,6 +6,8 @@
 // #include "lve_swap_chain.hpp"
 #include "lve_game_object.hpp"
 #include "lve_renderer.hpp"
+#include "staticValue.hpp"
+#include "lve_descriptors.hpp"
 
 // std
 #include <memory>
@@ -19,6 +21,7 @@ class FirstApp {
         static constexpr int WIDTH = 800;
         static constexpr int HEIGHT = 600;
         
+
         FirstApp();
         ~FirstApp();
 
@@ -44,7 +47,10 @@ class FirstApp {
         // std::unique_ptr<LvePipeline> lvePipeline;
         // VkPipelineLayout pipelineLayout;
         // std::vector<VkCommandBuffer> commandBuffers; 
-        std::vector<LveGameObject> gameObjects;
+
+        // note: order of declarations matters
+        std::unique_ptr<LveDescriptorPool> globalPool{};
+        LveGameObject::Map gameObjects;
 };
 
 
