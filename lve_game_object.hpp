@@ -2,36 +2,46 @@
 
 #include "lve_model.hpp"
 
+// libs
+#include <glm/gtc/matrix_transform.hpp>
+
 // std
 #include <memory>
+#include <unordered_map>
 
 namespace lve
 {
-    struct Transform2dComponent {
-        glm::vec2 translation{};    // position offset
-        glm::vec2 scale{1.f, 1.f};  // scaling factor
-        float rotation{0.f};        // rotation angle in radians
+    struct TransformComponent {
+        glm::vec3 translation{};    // position offset
+        glm::vec3 scale{1.f, 1.f, 1.f};  // scaling factor
+        glm::vec3 rotation{};        // rotation angle in radians
 
-        glm::mat2 mat2() {
-            const float s = glm::sin(rotation);
-            const float c = glm::cos(rotation);
-            glm::mat2 rotMatrix{{c, s}, {-s, c}};
+        // matrix corresponds to translate * Ry * Rx * Rz * scale transformation
+        // Rotation conventions uses tait-bryan angles with axis order Y(1), X(2), Z(3)
+        // Rotations correspond to Tait-bryan angles of Y(1), X(2), Z(3)
+        // https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
+        glm::mat4 mat4();
+        glm::mat3 normalMatrix();
+    };
 
-            glm::mat2 scaleMat{{scale.x, 0.0f}, {0.0f, scale.y}}; // attention: glm matrix constructor is column-major, 
-                                // so the first column is the x-axis, the second column is the y-axis
-            return rotMatrix * scaleMat;
-        }
+    struct PointLightComponent {
+        float lightIntensity = 1.0f;
     };
     
 
 class LveGameObject{
     public:
         using id_t = unsigned int;
+        using Map = std::unordered_map<id_t, LveGameObject>;
 
         static LveGameObject createGameObject(){
             static id_t currentId = 0;
             return LveGameObject{currentId++};
         }
+
+        static LveGameObject makePointLight(
+            float intensity = 10.f, float radius = 0.1f, glm::vec3 color = glm::vec3(1.f, 1.f, 1.f)
+        );
 
         LveGameObject(const LveGameObject&) = delete;
         LveGameObject& operator=(const LveGameObject&) = delete;
@@ -40,9 +50,12 @@ class LveGameObject{
 
         const id_t getId() const { return id; }
 
-        std::shared_ptr<LveModel> model{}; // one model can be used by multiple game objects,so we use shared_ptr
         glm::vec3 color{};
-        Transform2dComponent transform2d;
+        TransformComponent transform{};
+
+        // Optional pointer components
+        std::shared_ptr<LveModel> model{}; // one model can be used by multiple game objects,so we use shared_ptr
+        std::unique_ptr<PointLightComponent> pointLight = nullptr;
 
     private:
         LveGameObject(id_t objId) : id{objId} {} // to make sure that the only way to create a game object is through the createGameObject function

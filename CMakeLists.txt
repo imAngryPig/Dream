@@ -28,9 +28,14 @@ add_executable(pigine ${SOURCES})
 target_include_directories(pigine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/glm)
 target_include_directories(pigine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/glfw-3.3.8.bin.WIN64/include)
 target_include_directories(pigine PRIVATE E:/dataAndCode/CG/dependencies/VulkanSDK/Include)
+target_include_directories(pigine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/tinyObjLoader)
 
-target_link_libraries(pigine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/glfw-3.3.8.bin.WIN64/lib-vc2022/glfw3.lib)
-target_link_libraries(pigine PRIVATE E:/dataAndCode/CG/dependencies/VulkanSDK/Lib/vulkan-1.lib)
+
+target_link_directories(pigine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/glfw-3.3.8.bin.WIN64/lib-vc2022
+    E:/dataAndCode/CG/dependencies/VulkanSDK/Lib
+)
+
+target_link_libraries(pigine glfw3 vulkan-1)
 
 # add_custom_command(
 #     OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/engine/shader/res.txt

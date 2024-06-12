@@ -159,7 +159,6 @@ void LveSwapChain::createSwapChain()
     createInfo.imageArrayLayers = 1;
     createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-    std::cout<< "lve_swap_chain: imageCount: " << imageCount << std::endl;
 
     QueueFamilyIndices indices = device.findPhysicalQueueFamilies();
     uint32_t queueFamilyIndices[] = {indices.graphicsFamily, indices.presentFamily};
@@ -193,6 +192,7 @@ void LveSwapChain::createSwapChain()
   // retrieve the handles.
   vkGetSwapchainImagesKHR(device.device(), swapChain, &imageCount, nullptr);
   swapChainImages.resize(imageCount);
+  std::cout<< "lve_swap_chain: imageCount: " << imageCount << std::endl;
   vkGetSwapchainImagesKHR(device.device(), swapChain, &imageCount, swapChainImages.data());
 
   swapChainImageFormat = surfaceFormat.format;
