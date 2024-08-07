@@ -70,6 +70,32 @@ class LveDevice {
       VkImage &image,
       VkDeviceMemory &imageMemory);
 
+  void createImage(uint32_t width, 
+        uint32_t height, 
+        VkFormat format, 
+        VkImageTiling tiling, 
+        VkImageUsageFlags usage, 
+        VkMemoryPropertyFlags properties, 
+        VkImage& image, 
+        VkDeviceMemory& imageMemory);
+
+  void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+
+  VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+  VkSampler createTextureSampler(
+  VkFilter magFilter = VK_FILTER_LINEAR, 
+  VkFilter minFilter = VK_FILTER_LINEAR,
+  VkSamplerAddressMode addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+  VkSamplerAddressMode addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+  VkSamplerAddressMode addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+  VkBool32 anisotropyEnable = VK_TRUE,
+  float maxAnisotropy = 16.f,
+  VkBool32 unnormalizedCoordinates = VK_FALSE,
+  VkSamplerMipmapMode mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
+  float minLod = 0.f, float maxLod = 1.f
+  );
+  void copyImage2D(VkImage srcImage, VkImage dstImage, uint32_t width, uint32_t height);
+
   VkPhysicalDeviceProperties properties;
 
  private:

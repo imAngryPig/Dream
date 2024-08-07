@@ -13,22 +13,31 @@ project(Dream LANGUAGES CXX)
 #     set(CMAKE_BUILD_TYPE Release)
 # endif()
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-set(CMAKE_EXE_LINKER_FLAGS /NODEFAULTLIB:"MSVCRT.lib")
-endif()
+# if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+# set(CMAKE_EXE_LINKER_FLAGS /NODEFAULTLIB:"MSVCRT.lib")
+# endif()
 
-if (WIN32)
-    add_definitions(-DNOMINMAX -D_USE_MATH_DEFINES)
-endif()
 
 file(GLOB SOURCES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp)
 
 add_executable(pigine ${SOURCES})
 
-target_include_directories(pigine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/glm)
-target_include_directories(pigine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/glfw-3.3.8.bin.WIN64/include)
-target_include_directories(pigine PRIVATE E:/dataAndCode/CG/dependencies/VulkanSDK/Include)
-target_include_directories(pigine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/tinyObjLoader)
+if (WIN32)
+    add_definitions(-DNOMINMAX -D_USE_MATH_DEFINES)
+    target_sources(pigine PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/resources/iconset.rc") 
+    #set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -H${WIN_ICON}")
+endif()
+
+
+
+
+target_include_directories(pigine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/glm
+${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/glfw-3.3.8.bin.WIN64/include
+E:/dataAndCode/CG/dependencies/VulkanSDK/Include
+${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/tinyObjLoader
+${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/stb_image
+)
+
 
 
 target_link_directories(pigine PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/engine/3rdparty/glfw-3.3.8.bin.WIN64/lib-vc2022
@@ -58,4 +67,7 @@ add_custom_command(
     COMMENT "Running a .bat script after building"
 )
 
+if(MSVC)
+    target_link_options(pigine PRIVATE "/NODEFAULTLIB:libcmt.lib")
+endif()
 

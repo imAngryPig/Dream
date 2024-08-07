@@ -7,10 +7,10 @@
 #include <stdexcept>
 #include <iostream>
 #include <cassert>
+#include <filesystem>
 
 namespace lve
 {
-    std::string LvePipeline::rootFilePath = "E:/dataAndCode/code/Vulkan_vsProject/Dream/";
 
 
     LvePipeline::LvePipeline(LveDevice &device, const std::string &vertFilepath, const std::string &fragFilepath, const PipelineConfigInfo &configInfo)
@@ -24,6 +24,7 @@ namespace lve
         vkDestroyShaderModule(lveDevice.device(), vertShaderModule, nullptr);
         vkDestroyShaderModule(lveDevice.device(), fragShaderModule, nullptr);
         vkDestroyPipeline(lveDevice.device(), graphicsPipeline, nullptr);
+        
     }
 
     void LvePipeline::bind(VkCommandBuffer commandBuffer)
@@ -130,18 +131,19 @@ namespace lve
         configInfo.colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
         configInfo.colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
         configInfo.colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
-        
+
     }
 
     std::vector<char> LvePipeline::readFile(const std::string &filepath)
     {
-
-        std::ifstream file{rootFilePath + filepath, std::ios::ate | std::ios::binary};
+        auto currentPath = std::filesystem::current_path().parent_path().parent_path();
+        std::cout << "currentPath: " << currentPath << std::endl;
+        std::ifstream file{currentPath.string() + filepath, std::ios::ate | std::ios::binary};
         
 
         if(!file.is_open()){
             std::cout << "filepath: " << filepath << std::endl;
-            throw std::runtime_error("failed to open file: " + filepath);
+            throw std::runtime_error("failed to open file: " + currentPath.string() + filepath);
         }
         
         size_t fileSize = static_cast<size_t>(file.tellg());

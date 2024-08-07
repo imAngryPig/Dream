@@ -2,6 +2,7 @@
 
 #include "lve_camera.hpp"
 #include "lve_game_object.hpp"
+#include "lve_descriptors.hpp"
 
 // lib
 #include <vulkan/vulkan.h>
@@ -20,7 +21,10 @@ struct GlobalUbo {
         glm::mat4 projection{1.f};
         glm::mat4 view{1.f};
         glm::mat4 inverseView{1.f};
-        glm::vec4 ambientLightColor{1.f, 1.f, 1.f, .02f}; // w is intensity
+        glm::mat4 lightProjection{1.f};
+        glm::mat4 lightView{1.f};
+        glm::mat4 lightInverseView{1.f};
+        glm::vec4 ambientLightColor{1.f, 1.f, 1.f, 0.04f}; // w is intensity
         PointLight pointLights[MAX_LIGHTS];
         int numLights;
     };
@@ -31,7 +35,9 @@ struct FrameInfo {
   float frameTime;
   VkCommandBuffer commandBuffer;
   LveCamera &camera;
+  LveCamera &lightcamera;
   VkDescriptorSet globalDescriptorSet;
   LveGameObject::Map &gameObjects;
+  LveDescriptorPool &descriptorPool;
 };
 }  // namespace lve

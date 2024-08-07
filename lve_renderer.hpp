@@ -31,6 +31,12 @@ class LveRenderer {
     assert(isFrameStarted && "Cannot get frame index when frame not in progress");
     return currentFrameIndex;
   }
+  int getImageIndex() const {
+    assert(isFrameStarted && "Cannot get frame index when frame not in progress");
+    return currentImageIndex;
+  }
+
+  VkImage getSwapChainImage(){ return lveSwapChain->getImage(currentImageIndex);}
 
   VkCommandBuffer beginFrame();
   void endFrame();
