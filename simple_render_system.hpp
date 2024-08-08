@@ -5,6 +5,7 @@
 #include "lve_game_object.hpp"
 #include "lve_pipeline.hpp"
 #include "lve_frame_info.hpp"
+#include "lve_descriptors.hpp"
 
 // std
 #include <memory>
@@ -13,7 +14,7 @@
 namespace lve {
 class SimpleRenderSystem {
  public:
-  SimpleRenderSystem(LveDevice &device, VkRenderPass renderPass, VkDescriptorSetLayout globalSetLayout);
+  SimpleRenderSystem(LveDevice &device, VkRenderPass renderPass, std::vector<VkDescriptorSetLayout>& descriptorSetLayouts);
   ~SimpleRenderSystem();
 
   SimpleRenderSystem(const SimpleRenderSystem &) = delete;
@@ -21,13 +22,19 @@ class SimpleRenderSystem {
 
   void renderGameObjects(FrameInfo & frameInfo);
 
+  std::vector< std::unique_ptr<LveDescriptorSetLayout> > localSetLayouts;
+  
  private:
-  void createPipelineLayout(VkDescriptorSetLayout globalSetLayout);
+  void createLocalSetLayouts();
+  void createPipelineLayout(std::vector<VkDescriptorSetLayout>& descriptorSetLayouts);
   void createPipeline(VkRenderPass renderPass);
 
   LveDevice &lveDevice;
 
   std::unique_ptr<LvePipeline> lvePipeline;
   VkPipelineLayout pipelineLayout;
+  
+  
+
 };
 }  // namespace lve

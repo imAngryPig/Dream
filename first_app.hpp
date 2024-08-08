@@ -18,8 +18,8 @@ namespace lve
 class FirstApp {
 
     public:
-        static constexpr int WIDTH = 800;
-        static constexpr int HEIGHT = 600;
+        static constexpr int WIDTH = 1280;
+        static constexpr int HEIGHT = 1060;
         
 
         FirstApp();
@@ -30,7 +30,10 @@ class FirstApp {
 
     void run();
     private:
-        void loadGameObjects();
+        void loadGameObjects(LveDescriptorPool &descriptorPool, 
+        std::vector< std::unique_ptr<LveDescriptorSetLayout> >& descriptorSetLayouts,
+        std::vector< LveModel::Builder >& modelBuilders
+        );
         // void createPipelineLayout();
         // void createPipeline();
         // void createCommandBuffers();
@@ -51,6 +54,9 @@ class FirstApp {
         // note: order of declarations matters
         std::unique_ptr<LveDescriptorPool> globalPool{};
         LveGameObject::Map gameObjects;
+
+        // for test
+        VkDescriptorImageInfo imageInfo;
 };
 
 

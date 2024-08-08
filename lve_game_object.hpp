@@ -22,6 +22,8 @@ namespace lve
         // https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix
         glm::mat4 mat4();
         glm::mat3 normalMatrix();
+        glm::mat4 mat4OpenGL();             // forward -Z up Y right X
+        glm::mat3 normalMatrixOpenGL();     // forward -Z up Y right X
     };
 
     struct PointLightComponent {

@@ -4,6 +4,7 @@
 #include <array>
 #include <cassert>
 #include <stdexcept>
+#include <iostream>
 
 namespace lve {
 
@@ -97,6 +98,7 @@ void LveRenderer::endFrame() {
     lveWindow.resetWindowResizedFlag();
     recreateSwapChain();
   } else if (result != VK_SUCCESS) {
+    std::cout << "failed to present swap chain image!" << std::endl;
     throw std::runtime_error("failed to present swap chain image!");
   }
 
@@ -106,9 +108,9 @@ void LveRenderer::endFrame() {
 
 void LveRenderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
   assert(isFrameStarted && "Can't call beginSwapChainRenderPass if frame is not in progress");
-  assert(
-      commandBuffer == getCurrentCommandBuffer() &&
-      "Can't begin render pass on command buffer from a different frame");
+  // assert(
+  //     commandBuffer == getCurrentCommandBuffer() &&
+  //     "Can't begin render pass on command buffer from a different frame");
 
   VkRenderPassBeginInfo renderPassInfo{};
   renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -140,9 +142,9 @@ void LveRenderer::beginSwapChainRenderPass(VkCommandBuffer commandBuffer) {
 
 void LveRenderer::endSwapChainRenderPass(VkCommandBuffer commandBuffer) {
   assert(isFrameStarted && "Can't call endSwapChainRenderPass if frame is not in progress");
-  assert(
-      commandBuffer == getCurrentCommandBuffer() &&
-      "Can't end render pass on command buffer from a different frame");
+  // assert(
+  //     commandBuffer == getCurrentCommandBuffer() &&
+  //     "Can't end render pass on command buffer from a different frame");
   vkCmdEndRenderPass(commandBuffer);
 }
 

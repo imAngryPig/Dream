@@ -2,6 +2,7 @@
 
 #include "lve_device.hpp"
 #include "lve_buffer.hpp"
+#include "lve_texture.hpp"
 
 // libs
 #define GLM_FORCE_RADIANS
@@ -37,10 +38,16 @@ namespace lve{
             std::vector<Vertex> vertices;
             std::vector<uint32_t> indices;
 
-            void loadModel(const std::string &filepath);
+            std::unordered_map<std::string, std::vector<uint32_t> > subMeshesIndex;
+
+            std::unordered_map<std::string, LveTexture::materialBuilder> mapMaterials;
+            std::unordered_map<std::string, std::shared_ptr<LveTexture> > mapTextures;
+
+            void loadModel(const std::string &filepath, LveDevice& device);
         };
 
-        LveModel(LveDevice& device, const LveModel::Builder &builder);
+        LveModel(LveDevice& device, LveModel::Builder builder, LveDescriptorPool &descriptorPool, 
+        std::vector< std::unique_ptr<LveDescriptorSetLayout> >& descriptorSetLayouts);
         ~LveModel();
 
         LveModel(const LveModel&) = delete;
@@ -48,23 +55,47 @@ namespace lve{
 
         static std::unique_ptr<LveModel> createModelFromFile(
         LveDevice& device, 
-        const std::string& filepath);
+        const std::string& filepath,
+        LveDescriptorPool &descriptorPool, 
+        std::vector< std::unique_ptr<LveDescriptorSetLayout> >& descriptorSetLayouts
+        // LveModel::Builder &builder
+        );
 
-        void bind(VkCommandBuffer commandBuffer);
-        void draw(VkCommandBuffer commandBuffer);
+        void bind(VkCommandBuffer commandBuffer, std::string name);
+        void draw(VkCommandBuffer commandBuffer, std::string name);
+
+        void drawAll(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout);
+        
+        VkDescriptorImageInfo imageInfo{};
 
         private:
-        void createVertexBuffers(const std::vector<Vertex> &vertices);
-        void createIndexBuffers(const std::vector<uint32_t> &indices);
+        void createVertexBuffers(std::string name, const std::vector<Vertex> &vertices);
+        void createIndexBuffers(std::string name, const std::vector<uint32_t> &indices);
+        void createRenderingResources(LveDescriptorPool &descriptorPool, 
+        std::vector< std::unique_ptr<LveDescriptorSetLayout> >& descriptorSetLayouts);
+        void createTextureBuffers();
+        void createUniformBuffers(std::string name, LveTexture::MaterialCoefficients &materialCoef);
+        void createDescriptorSet(LveModel::Builder &builder, LveDescriptorPool &descriptorPool, 
+        std::vector< std::unique_ptr<LveDescriptorSetLayout> >& descriptorSetLayouts);
 
         LveDevice& lveDevice;
+        Builder localbuilder{};
 
-        std::unique_ptr<LveBuffer> vertexBuffer;
-        uint32_t vertexCount;
+        std::unordered_map<std::string, std::unique_ptr<LveBuffer>> vertexBuffers;
+        std::unordered_map<std::string, uint32_t> vertexCounts;
 
         bool hasIndexBuffer = false;
-        std::unique_ptr<LveBuffer> indexBuffer;
-        uint32_t indexCount;
+        std::unordered_map<std::string, std::unique_ptr<LveBuffer>> indexBuffers;
+        std::unordered_map<std::string, uint32_t> indexCounts;
+
+        bool hasTexture = false;
+        std::shared_ptr<LveTexture> texture;
+
+        std::unordered_map<std::string, std::unique_ptr<LveBuffer> > uniformBuffers;
+
+        std::unordered_map<std::string, std::vector<VkDescriptorSet> > descriptorSets;
+        
+        
     };
 
 } // namespace lve
